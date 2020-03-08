@@ -191,7 +191,7 @@ def refresh():
     incompleted_items = get_incomplete(all_tasks)
     lifo_reordering = scheduler_reorder(incompleted_items, method = "lifo")
     new_priority = reassign_order(lifo_reordering)
-    new_cal = new_calendar(new_priority, threshold = 10)
+    new_cal = new_calendar(new_priority, threshold = 5)
 
     for tt in new_cal:
         update_single_task(api_token, tt["id"], tt["due"]["date"])
