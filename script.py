@@ -1,9 +1,12 @@
 from task_rebalancer import *
 import time
+import datetime
 
 starttime = time.time()
 
 iter_num = 1
+print("started process at: ", str(datetime.datetime.now()))
+
 while True:
     time.sleep(3600.0 - ((time.time() - starttime) % 3600.0))
     refresh()
