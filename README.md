@@ -1,96 +1,38 @@
-# Template for hosting python scripts and applications on Heroku
+# Todidnt
 
-This is a small example of running your script with
-[Heroku](https://www.heroku.com/). You can run almost any python application
-with any dependencies.
+## Prerequisites
+You'll need to save a secret key as .secret. This will change in the future as I make the service more generalized for users other than myself.
 
-## Getting Started
+## Introduction
+Sorting algorithms were one of the first things that I learned about when studying computer science. This interaction with algorithms was one of the first reasons I fell in love with programming - they demonstrated how thought could be turned into reality, and how different conceptions of thought could constrain or free you.
 
-1. Download or clone this repository
-2. Register on [Heroku](https://www.heroku.com/)
-3. Download and install [Heroku CLI](https://devcenter.heroku.com/articles/getting-started-with-python#set-up)
-4. Download and install [git](https://git-scm.com/downloads)
-5. Copy your script or project to this repository's folder
-6. Replace "script.py" with the path to your main executable file in `Procfile`
+Scheduling algorithms followed a little later, and were a point of interest that had far reaching implications / consequences for everything from organizing my day to designing industrial level applications.
 
-   ```procfile
-   worker: python script.py
-   ```
+Since then, life happened... and along the way, I figured out that my methods of getting things done wasn't as effective as I had once thought.
 
-   > If you are getting errors, you can try replace `worker` with `web`.
-7. You may select your python version and runtime using `runtime.txt`. Read
-   how on [official heroku page](https://devcenter.heroku.com/articles/python-runtimes#selecting-a-runtime).
-8. If you are using any not built-in modules, you must add them to your
-   `requirements.txt`. To check which version of the module you have, run
-   `pip freeze` in the terminal. You will get lines with information about
-   installed modules and their versions in the format like
-   `MODULE_NAME==MODULE_VERSION`. Add lines with required modules and their
-   versions to your `requirements.txt`. Don't keep unused modules in
-   `requirements.txt`. This file should contain every module your application
-   needs. Heroku will install modules from this file automatically.
-9. Open terminal (or do it another way, but I will explain how to do it in
-   the terminal on Ubuntu) and create a git repository.
-   1. Initiate git repository
+After introducing Todoist into my life, I finally had a single place to log everything I needed to... well... get done! But while I now had a place to put all my things, the next (even greater) complexity was figuring out: 1) when I would do them, and 2) how long they would take.
 
-      ```bash
-      git init
-      ```
+## What is this repository for?
+Todidnt is a series of scheduling models meant to experiment with different workflows for organizing, redistributing, and enriching tasks that I need to execute.
 
-   2. Create heroku application
+## Scheduling Implementations
+Threshold Scheduler | February 15, 2020
+Grabbing all tasks, this scheduler distributes work items across days (at random) while ensuring that only a certain number of tasks are allocated to each day.
 
-      ```bash
-      heroku create
-      ```
+## Providing Feedback
+(Please note that I develop this application independently and in my free time.)
 
-   3. Add, commit and push your code into branch `master` of the
-      remote `heroku`.
+Though this tool is primarily built for myself, I want to collect use cases from people who live by their todo lists. Should you want to add a use case, open up an issue and clearly state: what you want to accomplish, how you are doing it today (or not able to), and what this change would enable you to do!
 
-      ```bash
-      git add .
-      git commit -m "initial commit"
-      git push heroku master
-      ```
 
-10. Specify the amount of worker that will run your application
+# Notes about Usage
 
-    ```bash
-    heroku ps:scale worker=1
-    ```
+## Todoist Limitations
 
-11. Now everything should be working. You can check your logs with this command
+Citing their page regarding [utilization](https://developer.todoist.com/rest/v1/#limits):
 
-    ```bash
-    heroku logs --tail
-    ```
+>### **Requests per Minute**
+>You can make a total of 50 requests per minute per user when using the REST API.
 
-12. You can open the URL where the script is deployed using the below
-    command (if you are deploying web application)
-
-    ```bash
-    heroku open
-    ```
-
-13. From now on you can use usual git commands (push, add, commit, etc.)
-    to update your app. Every time you `push heroku master` your
-    app gets redeployed with updated source code
-
-14. To stop your application scale down the amount of workers with like this
-
-     ```bash
-    heroku ps:scale worker=0
-    ```
-
-### Prerequisites
-
-* [Heroku CLI](https://devcenter.heroku.com/articles/getting-started-with-python#set-up)
-* [git](https://git-scm.com/downloads)
-
-## Authors
-
-* @michaelkrukov - https://michaelkrukov.ru/
-
-## Acknowledgments
-
-* [Official guide to deploy app](https://devcenter.heroku.com/articles/getting-started-with-python#introduction)
-* [Official guide about worker](https://devcenter.heroku.com/articles/background-jobs-queueing)
-* [Guided "Simple twitter-bot with Python, Tweepy and Heroku"](http://briancaffey.github.io/2016/04/05/twitter-bot-tutorial.html)
+Given an example:
+ - **200 tasks** will take **4 minutes** to complete

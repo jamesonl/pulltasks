@@ -180,18 +180,23 @@ def scheduling_balancer(all_tasks, threshold = 5):
 # def task_status():
 
 
-def refresh():
+def taskrefresher():
     with open(".secret") as file:
         api_token = str(file.read().strip("\n"))
 
     # START of task updating
-    all_tasks = json.loads(get_active_tasks(api_token).text)
+    all_tasks = get_incomplete(json.loads(get_active_tasks(api_token).text))
     # status_log = task_status(all_tasks)
-
-    incompleted_items = get_incomplete(all_tasks)
-    lifo_reordering = scheduler_reorder(incompleted_items, method = "lifo")
+    lifo_reordering = scheduler_reorder(all_tasks, method = "lifo")
     new_priority = reassign_order(lifo_reordering)
     new_cal = new_calendar(new_priority, threshold = 5)
 
+    return new_cal
+
+def taskupdeter(new_cal):
+    with open(".secret") as file:
+        api_token = str(file.read().strip("\n"))
     for tt in new_cal:
         update_single_task(api_token, tt["id"], tt["due"]["date"])
+    updated_tasks = len(new_cal)
+    return "updated tasks: {%s}" % (updated_tasks)
