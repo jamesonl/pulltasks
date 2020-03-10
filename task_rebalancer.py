@@ -191,7 +191,7 @@ def taskrefresher():
 
     return new_cal
 
-def taskupdeter(new_cal):
+def taskupdater(new_cal):
     with open(".secret") as file:
         api_token = str(file.read().strip("\n"))
     for tt in new_cal:
