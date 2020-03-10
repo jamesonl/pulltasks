@@ -1,11 +1,12 @@
 from task_rebalancer import *
 import time
 import datetime
-
+import sys
 starttime = time.time()
 
 iter_num = 1
 print("started process at: ", str(datetime.datetime.now()))
+sys.stdout.flush()
 
 # while True:
 #     print("Refresh Num: " + str(iter_num) + ", Running for: " + str(round((time.time() - starttime) / 60, 2)) + " minutes")
@@ -22,6 +23,7 @@ while True:
         counter += 1
         print(datetime.datetime.now())
         print("Refresh Num: " + str(iter_num) + ", Running for: " + str(round((time.time() - starttime) / 60, 2)) + " minutes")
+        sys.stdout.flush()
         refresh()
         iter_num += 1
         with open("info.txt", "w") as txt:
