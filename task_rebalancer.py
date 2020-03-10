@@ -177,8 +177,6 @@ def scheduling_balancer(all_tasks, threshold = 5):
 
     return flat_list
 
-# def task_status():
-
 
 def taskrefresher():
     with open(".secret") as file:
