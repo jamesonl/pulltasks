@@ -36,3 +36,10 @@ Citing their page regarding [utilization](https://developer.todoist.com/rest/v1/
 
 Given an example:
  - **200 tasks** will take **4 minutes** to complete
+
+
+# Lessons Learned
+
+## Things to consider for future worker functions
+
+ - 

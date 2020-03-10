@@ -5,7 +5,7 @@ import time
 
 def calendar_schedule_allocator(task, task_limit, threshold):
     '''determine the next available date to allocate the task'''
-    calendar_days = task_limit.keys()
+    calendar_days = list(task_limit.keys())
     calendar_days.sort()
     for cd in calendar_days:
         if task_limit[cd] < threshold:
