@@ -1,4 +1,4 @@
-# Todidnt
+# Pulltasks
 
 ## Prerequisites
 You'll need to save a secret key as .secret. This will change in the future as I make the service more generalized for users other than myself.
