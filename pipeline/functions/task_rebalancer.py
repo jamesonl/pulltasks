@@ -5,7 +5,12 @@ import uuid
 import todoist
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from rebalancing_functions import *
+from .rebalancing_functions import calendar_schedule_allocator, new_calendar, reassign_order, get_incomplete, scheduler_reorder
+
+
+with open(".secret") as file:
+    api_token = str(file.read().strip("\n"))
+file.close()
 
 def get_projects(api_token):
     data = {
@@ -60,7 +65,6 @@ def assign_date(all_tasks, task, api_token):
     task_num = str(task["id"])
     update_info = {"task_id": task["id"], "content": task["content"], "date_str": "today"}
     api_task_address = 'https://api.todoist.com/rest/v1/tasks/' + task_num
-    # print("Updating at: " + api_task_address, headers, task)
 
     response = requests.post(api_task_address, headers=headers, data=update_info)
     return dir(response)
@@ -84,11 +88,6 @@ def update_single_task(api_token, task_id, target_date):
     api_task_address = 'https://api.todoist.com/rest/v1/tasks/' + str(task_id)
     response = requests.post(api_task_address, headers=headers, data=update_info)
     return response.text
-
-### TODO: second scheduling balancer:
-#   break groups which are larger than the threshold into chunks. Deposit those
-#   chunks each across the timeseries.
-# def scheduling_balancer_2(all_tasks, threshold = 5):
 
 def scheduling_balancer(all_tasks, threshold = 5):
     # count the unassigned tasks by date
@@ -167,9 +166,7 @@ def scheduling_balancer(all_tasks, threshold = 5):
                 obj["due"] = {"date":ra}
                 flat_list.append(obj)
 
-    # print("entering recursive distribution of tasks")
     if len(risk_dates) == 0:
-        # print("final interation complete")
         pass
     else:
         # print("reassignment rules insufficient... entering loop")
@@ -177,24 +174,16 @@ def scheduling_balancer(all_tasks, threshold = 5):
 
     return flat_list
 
-
-def taskrefresher():
-    with open(".secret") as file:
-        api_token = str(file.read().strip("\n"))
-
-    # START of task updating
+def taskrefresher(threshold, method):
     all_tasks = get_incomplete(json.loads(get_active_tasks(api_token).text))
-    # status_log = task_status(all_tasks)
-    lifo_reordering = scheduler_reorder(all_tasks, method = "lifo")
-    new_priority = reassign_order(lifo_reordering)
-    new_cal = new_calendar(new_priority, threshold = 5)
-
+    reordered_tasks = scheduler_reorder(all_tasks, method = "lifo")
+    new_priority = reassign_order(reordered_tasks)
+    new_cal = new_calendar(new_priority, threshold = 10)
     return new_cal
 
 def taskupdater(new_cal):
-    with open(".secret") as file:
-        api_token = str(file.read().strip("\n"))
     for tt in new_cal:
+        print("updated: ", str([tt["id"], tt["due"]["date"]]))
         update_single_task(api_token, tt["id"], tt["due"]["date"])
     updated_tasks = len(new_cal)
     return "updated tasks: {%s}" % (updated_tasks)

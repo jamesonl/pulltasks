@@ -11,31 +11,47 @@ def calendar_schedule_allocator(task, task_limit, threshold):
         if task_limit[cd] < threshold:
             return cd
 
-def new_calendar(tasks, threshold = 2, start = "today", forward_range_days = 60):
+def get_current_calendar(tasks, threshold, start = "today", method = "blank"):
+    # this is used to either create a blank slate or provide the current
+    # breakdown of tasks as they exist today
     if start == "today":
         today = date(datetime.now().year, datetime.now().month, datetime.now().day)
     else:
         split_date = start.split("-")
-        param_date_format = date(int(split_date[0]), int(split_date[1]), int(split_date[2]))
-        today = date(param_date_format.year, param_date_format.month, param_date_format.day)
+        pdf = date(int(split_date[0]), int(split_date[1]), int(split_date[2]))
+        today = date(pdf.year, pdf.month, pdf.day)
 
-    updated_tasks = []
-    task_limit = {}
-
+    task_allocation = {}
+    forward_range_days = int(round(len(tasks) / threshold, 0)) + 1
     forward_range = today + timedelta(days=forward_range_days)
-    delta_days = forward_range - today
-    calendar_dates = [today + timedelta(days=i) for i in range(delta_days.days + 1)]
+    dd = forward_range - today
+    calendar_dates = [today + timedelta(days=i) for i in range(dd.days + 1)]
     allocated_task_ids = []
 
-    for cd in calendar_dates:
-        smart_date = cd.strftime("%Y-%m-%d")
-        task_limit[smart_date] = 0
+    if method == "blank":
+        for cd in calendar_dates:
+            smart_date = cd.strftime("%Y-%m-%d")
+            task_allocation[smart_date] = 0
+    elif method == "current":
+        for task in tasks:
+            tdd = task["due"]["date"]
+            if tdd in task_allocation.keys():
+                task_allocation[tdd] += 1
+            else:
+                task_allocation[tdd] = 1
+
+    return [task_allocation, calendar_dates]
+
+
+def new_calendar(tasks, threshold, start = "today"):
+    updated_tasks = []
+    task_limit = get_current_calendar(tasks, threshold, start, method = "blank")
 
     cd_counter = 0
     for task in tasks:
-        bootstrap = calendar_dates[cd_counter].strftime("%Y-%m-%d")
-        new_due_date = calendar_schedule_allocator(task, task_limit, threshold)
-        task_limit[new_due_date] += 1
+        bootstrap = task_limit[1][cd_counter].strftime("%Y-%m-%d")
+        new_due_date = calendar_schedule_allocator(task, task_limit[0], threshold)
+        task_limit[0][new_due_date] += 1
         task["due"] = {"date": new_due_date}
         updated_tasks.append(task)
 

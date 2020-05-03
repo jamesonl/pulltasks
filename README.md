@@ -37,9 +37,13 @@ Citing their page regarding [utilization](https://developer.todoist.com/rest/v1/
 Given an example:
  - **200 tasks** will take **4 minutes** to complete
 
+As a matter of best practice:
+ - My goal should be to reduce the number of times that tasks must be rescheduled
+ - My total collection of tasks should never exceed a certain number
+    - This means the balance between ingesting new tasks and completing existing tasks
 
 # Lessons Learned
 
 ## Things to consider for future worker functions
 
- - 
+ -
