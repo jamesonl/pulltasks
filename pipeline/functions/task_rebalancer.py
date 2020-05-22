@@ -3,6 +3,7 @@ import requests
 import json
 import uuid
 import todoist
+import time
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from .rebalancing_functions import calendar_schedule_allocator, new_calendar, reassign_order, get_incomplete, scheduler_reorder
@@ -93,6 +94,8 @@ def scheduling_balancer(all_tasks, threshold = 5):
     # count the unassigned tasks by date
     cal_tasks = {}
     today = datetime.now()
+    print("total tasks: ", str(len(all_tasks)))
+
     for task in all_tasks:
         try:
             due_date_info = task["due"]["date"]
@@ -110,21 +113,27 @@ def scheduling_balancer(all_tasks, threshold = 5):
             risk_dates.append(workload)
 
     # push tasks forward one by one
+    days_to_complete = int(len(all_tasks) / threshold) + 1
     new_task_schedule = {}
     min_date = min(cal_tasks.keys()).split("-")
-    print("Min date: ", min_date)
-    sdate = datetime(int(min_date[0]), int(min_date[1]), int(min_date[2]))
+
+    smin = (int(min_date[0]), int(min_date[1]), int(min_date[2]))
+    sdate = datetime(*smin)
     max_date = max(cal_tasks.keys()).split("-")
-    print("Max date: ", max_date)
-    edate = datetime(int(max_date[0]), int(max_date[1]), int(max_date[2])) + timedelta(days = 180)
+
+    emax = int(max_date[0]), int(max_date[1]), int(max_date[2])
+    edate = datetime(*emax) + timedelta(days = days_to_complete)
     delta = edate - sdate
+
     date_range = [(sdate + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(delta.days + 1)]
 
     reassignment = OrderedDict()
+    # create a list of all the dates in the upcoming days that I
+    # expect to reallocate tasks
     for point in date_range:
         reassignment[point] = []
 
-    # random integrator
+    # for each task, find the day that makes the most sense to allocate
     for point in date_range:
         for tt in all_tasks:
             if point in risk_dates:
@@ -174,16 +183,33 @@ def scheduling_balancer(all_tasks, threshold = 5):
 
     return flat_list
 
-def taskrefresher(threshold, method):
-    all_tasks = get_incomplete(json.loads(get_active_tasks(api_token).text))
-    reordered_tasks = scheduler_reorder(all_tasks, method = "lifo")
+def taskrefresher(tasks, threshold, method = "lifo"):
+    reordered_tasks = scheduler_reorder(tasks, method)
     new_priority = reassign_order(reordered_tasks)
     new_cal = new_calendar(new_priority, threshold = 10)
     return new_cal
 
-def taskupdater(new_cal):
-    for tt in new_cal:
-        print("updated: ", str([tt["id"], tt["due"]["date"]]))
-        update_single_task(api_token, tt["id"], tt["due"]["date"])
+# credit: https://www.geeksforgeeks.org/break-list-chunks-size-n-python/
+def divide_chunks(l, n):
+    # looping till length l
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+def taskupdater(new_cal, ntasks, throttle = 50):
+    # the todoist api throttles calls by 50, so I will adjust my rescheduler to
+    # only make 50 calls per minute.
+
+    binned_tasks = list(divide_chunks(new_cal, 50))
+
+    print("Total bins: ", str(len(binned_tasks)))
+    bin_num = 1
+    for bin in binned_tasks:
+        for tt in bin:
+            # print("updated: ", str([tt["id"], tt["content"], tt["due"]["date"]]))
+            update_single_task(api_token, tt["id"], tt["due"]["date"])
+        print("Completed Bin: ", str(bin_num))
+        bin_num += 1
+        time.sleep(60)
+
     updated_tasks = len(new_cal)
     return "updated tasks: {%s}" % (updated_tasks)

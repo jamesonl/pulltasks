@@ -1,6 +1,9 @@
 from functools import partial
 from operator import is_not
 from datetime import date, timedelta, datetime
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
 import time
 
 def calendar_schedule_allocator(task, task_limit, threshold):
@@ -86,6 +89,8 @@ def scheduler_reorder(tasks, method = "lifo"):
     if method == "fifo" or method == "lifo":
         augmented_items = sorted(tasks, key=lambda k: k['order'], reverse=rev_bool)
     elif method == "srft":
+        pass
+    elif method == "bucketed":
         pass
     else:
         pass
