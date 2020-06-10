@@ -1,1 +1,14 @@
-test_task = [{u'priority': 1, u'created': u'2020-05-17T17:51:27Z', u'url': u'https://todoist.com/showTask?id=3906593745', u'completed': False, u'section_id': 0, u'id': 3906593745L, u'content': u'[local-first software, in spite of the cloud!](https://martin.kleppmann.com/papers/local-first.pdf)', u'comment_count': 0, u'label_ids': [], u'due': {u'date': u'2020-05-10', u'recurring': False, u'string': u'2020-05-10'}, u'project_id': 2221539577L, u'order': 1}]
+test_task = [{'priority': 1,
+              'created': '2020-05-17T17:51:27Z',
+              'url': 'https://todoist.com/showTask?id=test_task_num',
+              'completed': False,
+              'section_id': 0,
+              'id': 000000000001,
+              'content': '[test task](https://test_task.com)',
+              'comment_count': 0,
+              'label_ids': [],
+              'due': {'date': '2020-05-10',
+                      'recurring': False,
+                      'string': '2020-05-10'},
+              'project_id': 123,
+              'order': 1}]

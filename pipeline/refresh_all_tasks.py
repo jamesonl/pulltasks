@@ -15,26 +15,26 @@ import json
 pp = pprint.PrettyPrinter(indent=4)
 
 # Import custom functions
-from functions.task_rebalancer import taskrefresher, taskupdater, get_active_tasks, api_token
-from functions.rebalancing_functions import get_incomplete
+from .functions.task_rebalancer import taskrefresher, taskupdater, get_active_tasks, api_token
+from .functions.rebalancing_functions import get_incomplete
 
 # Import test data
-from data.test_old_dates import test_task
+# from data.test_old_dates import test_task
 
 # Begin the sequence for refreshing the status of tasks
 starttime = time.time()
-daily_task_threshold = 10
+def daily_refresh(daily_task_threshold = 10):
 
-print("started process at: ", str(datetime.datetime.now()))
-print("kicking off assembly of dynamic scheduling")
+    print("started process at: ", str(datetime.datetime.now()))
+    print("kicking off assembly of dynamic scheduling")
 
-all_tasks = get_incomplete(json.loads(get_active_tasks(api_token).text))
-ntasks = len(all_tasks)
+    all_tasks = get_incomplete(json.loads(get_active_tasks(api_token).text))
+    ntasks = len(all_tasks)
 
-print("There are {tasks} tasks that will be rescheduled. \
-       Expected runtime is {minutes}".format(tasks = ntasks, \
-                                             minutes = round(ntasks / 50, 3)))
+    print("There are {tasks} tasks that will be rescheduled. \
+           Expected runtime is {minutes}".format(tasks = ntasks, \
+                                                 minutes = round(ntasks / 50, 3)))
 
-calendar = taskrefresher(all_tasks, daily_task_threshold)
-status = taskupdater(calendar, ntasks)
-print(status)
+    calendar = taskrefresher(all_tasks, daily_task_threshold)
+    status = taskupdater(calendar, ntasks)
+    return status

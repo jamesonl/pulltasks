@@ -4,12 +4,14 @@ import json
 import uuid
 import todoist
 import time
+import os
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from .rebalancing_functions import calendar_schedule_allocator, new_calendar, reassign_order, get_incomplete, scheduler_reorder
 
+home_path = os.path.join(os.getcwd(), 'pipeline/functions')
 
-with open(".secret") as file:
+with open(os.path.join(home_path, ".secret")) as file:
     api_token = str(file.read().strip("\n"))
 file.close()
 
