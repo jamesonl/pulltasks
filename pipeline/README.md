@@ -8,4 +8,6 @@ Since automated rescheduling is covered through the use of a heroku application,
 
 ## How to kick off a manual reload of tasks
 
-When
+  1. Load the `.venv` virtual environment.
+  2. Within the terminal, write: `python main.py`.
+  3. Based upon the number of tasks, the script will automatically reallocate tasks based on the predefined scheduling parameters that were set.
